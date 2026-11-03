@@ -72,6 +72,20 @@ Use the browser layer only with the ownership, pointer-lock, confirmation, and
 secret-handling rules in `SKILL.md`. The detailed component model, isolation
 rules, and recovery behavior are in [architecture.md](architecture.md).
 
+### Electron apps: the CDP GUI layer
+
+Electron desktop apps are Chromium renderers, but their custom UI may not appear
+in AT-SPI. When semantic control is unavailable, launch the app with a
+localhost-only remote debugging port and connect to its renderer over CDP. Read
+the visible DOM for labels and element geometry, then drive the real window with
+CDP input events such as `Input.dispatchMouseEvent`, `Input.dispatchKeyEvent`,
+and `Input.insertText`. Use renderer JavaScript only to observe UI state and
+target controls; do not mutate the document through internal app APIs.
+
+Apply the same localhost-only safety rule as the browser layer: bind remote
+debugging to loopback, keep the session and window human-watchable, and follow
+the ownership, pointer-lock, confirmation, and verification rules.
+
 ## The control loop
 
 Every desktop task follows the same loop:
